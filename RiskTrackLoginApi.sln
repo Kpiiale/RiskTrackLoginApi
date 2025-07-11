@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiskTrackLoginApi", "RiskTrackLoginApi\RiskTrackLoginApi.csproj", "{5A4BF0CC-6C56-46CA-8F5C-AB8C5AE1E56C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A4BF0CC-6C56-46CA-8F5C-AB8C5AE1E56C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A4BF0CC-6C56-46CA-8F5C-AB8C5AE1E56C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A4BF0CC-6C56-46CA-8F5C-AB8C5AE1E56C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A4BF0CC-6C56-46CA-8F5C-AB8C5AE1E56C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6610247D-B6E9-4913-B862-813BAF117D03}
+	EndGlobalSection
+EndGlobal
