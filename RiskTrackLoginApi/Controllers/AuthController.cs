@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; 
 using Microsoft.IdentityModel.Tokens;
+using RiskTrackLoginApi.Constracts;
 using RiskTrackLoginApi.Data;
 using RiskTrackLoginApi.DTOs;
 using RiskTrackLoginApi.Services;
@@ -15,15 +17,15 @@ namespace RiskTrackLoginApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmailService _emailService;
+        private readonly IPublishEndpoint _publishEndpoint; //inyeccion MassTransit
         private readonly IConfiguration _config;
 
         private static Dictionary<string, string> CodeStorage = new();
 
-        public AuthController(ApplicationDbContext context, IEmailService emailService, IConfiguration config)
+        public AuthController(ApplicationDbContext context, IPublishEndpoint publishEndpoint, IConfiguration config)
         {
             _context = context;
-            _emailService = emailService;
+            _publishEndpoint = publishEndpoint;
             _config = config;
         }
 
@@ -37,7 +39,12 @@ namespace RiskTrackLoginApi.Controllers
             var code = new Random().Next(100000, 999999).ToString();
             CodeStorage[dto.Email] = code;
 
-            await _emailService.SendVerificationEmailAsync(user.Email!, code);
+            //publicación de evento
+            await _publishEndpoint.Publish(new AuthenticationCodeGenerated
+            {
+                Email = user.Email!,
+                Code = code
+            });
 
             return Ok(new { message = "Código de verificación enviado", email = user.Email });
         }
