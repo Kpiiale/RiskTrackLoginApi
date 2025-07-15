@@ -1,6 +1,8 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RiskTrackLoginApi.Consumers;
 using RiskTrackLoginApi.Data;
 using RiskTrackLoginApi.Services;
 using System.Text;
@@ -19,6 +21,23 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<AuthenticationCodeConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ");
+        cfg.Host(rabbitMqConfig["HostName"], "/", h =>
+        {
+            h.Username(rabbitMqConfig["UserName"]);
+            h.Password(rabbitMqConfig["Password"]);
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 
 builder.Services.AddAuthentication(options =>
