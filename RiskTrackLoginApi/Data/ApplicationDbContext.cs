@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RiskTrackLoginApi.Data
 {
+    // Representa la sesión con la base de datos, permitiendo consultar y guardar datos.
     public class ApplicationDbContext : DbContext
     {
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }

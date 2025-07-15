@@ -16,10 +16,12 @@ namespace RiskTrackLoginApi.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        // Inyección de dependencias.
         private readonly ApplicationDbContext _context;
         private readonly IPublishEndpoint _publishEndpoint; //inyeccion MassTransit
         private readonly IConfiguration _config;
 
+        // Almacenamiento en memoria para los códigos de 2FA.
         private static Dictionary<string, string> CodeStorage = new();
 
         public AuthController(ApplicationDbContext context, IPublishEndpoint publishEndpoint, IConfiguration config)
@@ -35,6 +37,8 @@ namespace RiskTrackLoginApi.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
                 return Unauthorized("Credenciales inválidas.");
+
+            // Genera y almacena un código de verificación de 6 dígitos.
 
             var code = new Random().Next(100000, 999999).ToString();
             CodeStorage[dto.Email] = code;
@@ -66,10 +70,13 @@ namespace RiskTrackLoginApi.Controllers
                 new Claim(ClaimTypes.Role, user.Role ?? "User")
             };
 
+            // Crea la clave de seguridad y las credenciales para firmar el token.
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig["Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtConfig["ExpireMinutes"]!));
 
+            // Construye el token JWT.
             var token = new JwtSecurityToken(
                 issuer: jwtConfig["Issuer"],
                 audience: jwtConfig["Audience"],
